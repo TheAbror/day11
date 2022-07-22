@@ -1,16 +1,63 @@
 # day11
+<img width="1440" alt="image" src="https://user-images.githubusercontent.com/60324587/180370200-7f62960e-6917-4b1d-94b5-dfc379c71a57.png">
 
-A new Flutter project.
+1. What did I learn?
+```
+class Dataservices {
+  Future<WeatherResponse> getWeather(String city) async {
+    final queryParameter = {
+      'q': city,
+      'appid': '73795dead5a8cb8e385712da2810574f',
+      'units': 'imperial',
+    };
+    final uri =
+        Uri.http('api.openweathermap.org', "/data/2.5/weather", queryParameter);
 
-## Getting Started
+    final response = await http.get(uri);
+    print(response.body);
 
-This project is a starting point for a Flutter application.
+    final json = jsonDecode(response.body);
 
-A few resources to get you started if this is your first Flutter project:
+    return WeatherResponse.fromJson(json);
+  }
+}
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+```
+### get info from API
+```
+class WeatherResponse {
+  WeatherResponse(
+      {required this.cityName,
+      required this.tempInfo,
+      required this.weatherInfo});
+  final String cityName;
+  final TemperatureInfo tempInfo;
+  final WeatherInfo weatherInfo;
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  String get iconurl {
+    return 'https://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png';
+  }
+
+  factory WeatherResponse.fromJson(Map<String, dynamic> json) {
+    final cityName = json['name'];
+    final tempInfoJson = json['main'];
+    final tempInfo = TemperatureInfo.fromJson(tempInfoJson);
+
+    final weatherResponse = json['weather'][0];
+    final weatherInfo = WeatherInfo.fromJson(weatherResponse);
+    return WeatherResponse(
+        cityName: cityName, tempInfo: tempInfo, weatherInfo: weatherInfo);
+  }
+}
+```
+### to work with *factory*
+
+
+
+
+
+
+
+
+
+
